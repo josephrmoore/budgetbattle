@@ -1,33 +1,81 @@
+import org.json.*;
+import processing.serial.*;
+//import ddf.minim.*;
+
 Player p1 = new Player(0);
 Player p2 = new Player(1);
 int state;
+PImage[] backgrounds = new PImage[4];
+boolean p1ready, p2ready;
+PFont atlantic, gotham, bigcaslon;
+Serial port;
+
+ArrayList bills, favors, responses, endings;
+
+// create actionables
+// create players
+// send actionables
+// on interaction, do something
+// keep a record of the interactions
+// play responses according to actions
+// choose ending based on the final state of the interactions
+
 
 void setup(){
   state = 0;
+  p1ready=false;
+  p2ready=false;
+  backgrounds[0] = loadImage("title.jpg");
+  backgrounds[1] = loadImage("instructions.jpg");
+  backgrounds[2] = loadImage("level.jpg");
+  backgrounds[3] = loadImage("background.jpg");
+  port = new Serial(this, Serial.list()[0], 9600);
+  port.bufferUntil('\n');
+  atlantic = loadFont("atlantic.vlw");
+  gotham = loadFont("gotham.vlw");
+  bigcaslon = loadFont("bigcaslon.vlw");
+  bills = new ArrayList();
+  favors = new ArrayList();
+  responses = new ArrayList();
+  endings = new ArrayList();
+  load("bills", bills);
+  load("favors", favors);
+  load("responses", responses);
+  load("endings", endings);
+  size(800, 600);
+  background(0);
+  rectMode(CENTER);
+  JSON json = JSON.load(dataPath("budgetbattle.json"));
+  println(json);
+  // JSON f = json.getArray("favors");
+  // JSON f1 =  f.getObject(0);
+  // f1.getString("name") // fest1
+  // json.length()
 }
 
 void draw(){
+  image(backgrounds[state], 0, 0);
   // Intro screen
   if(state == 0){
-    
+    startScreen();
   // Splitscreen explanation
   } else if (state == 1){
-    
+    playersScreen();
   // The game
   } else if (state == 2){
-    
+    game();
   // Endings
   } else if (state == 3){
-    
+    results();
   }
 }
 
 void keyPressed() {
   if(key == 'q'){
-    p1.action();
+    action(p1);
   }
   if(key == 'p'){
-    p2.action();
+    action(p2);
   }
   if (key == '0') {
     state = 0;
@@ -40,6 +88,70 @@ void keyPressed() {
   }
   if (key == '3') {
     state = 3;
+  }
+}
+
+void startScreen(){
+  state = 0;
+}
+
+void playersScreen(){
+  state = 1;
+  if(p1ready==true){
+    // text saying ready
+  }
+  if(p2ready==true){
+    // text saying ready
+  }
+}
+
+void game(){
+  state = 2;
+  // game logic here
+}
+
+void results(){
+  state = 3;
+  Ending e1 = calculateEnding(p1);
+  Ending e2 = calculateEnding(p2);
+  e1.draw();
+  e2.draw();
+}
+
+void action(Player p){
+  if(state==0){
+    state=1;
+  } else if(state==1){
+    if(p.player==0 && p1ready==false){
+      p1ready=true;
+    }
+    if(p.player==1 && p2ready==false){
+      p2ready=true;
+    }
+    if(p1ready==true && p2ready==true){
+      state=2;
+    }
+  } else if(state==2){
+    p.act();
+  } else if(state==3){
+    // dunno yet
+  }
+}
+
+Ending calculateEnding(Player p){
+  Ending e = new Ending(true, "left", "mediocre", "it was ok.");
+  return e;
+}
+
+void load(String type, ArrayList container){
+  if(type=="bills"){
+    
+  } else if(type=="favors"){
+    
+  } else if(type=="responses"){
+    
+  } else if(type=="endings"){
+    
   }
 }
 
@@ -115,106 +227,6 @@ void keyPressed() {
 //  teaparty[3] = loadImage("tp3.png");
 //  teaparty[4] = loadImage("tp4.png");
 //  teaparty[5] = loadImage("tp5.png");
-//  names[0] = "Corporation for Public Broadcasting Subsidy";
-//  names[1] = "Save America’s Treasures Program";
-//  names[2] = "International Fund for Ireland";
-//  names[3] = "Legal Services Corporation";
-//  names[4] = "National Endowment for the Arts";
-//  names[5] = "National Endowment for the Humanities";
-//  names[6] = "Hope VI Program";
-//  names[7] = "Amtrak Subsidies";
-//  names[8] = "Duplicative education programs. H.R. 2274";
-//  names[9] = "U.S. Trade Development Agency";
-//  names[10] = "Woodrow Wilson Center Subsidy";
-//  names[11] = "50% funding for congressional printing and binding";
-//  names[12] = "John C. Stennis Center Subsidy";
-//  names[13] = "Heritage Area Grants and Statutory Aid";
-//  names[14] = "50% Federal Travel Budget";
-//  names[15] = "20% Federal Vehicle Budget";
-//  names[16] = "Essential Air Service";
-//  names[17] = "Technology Innovation Program";
-//  names[18] = "Manufacturing Extension Partnership (MEP) Program";
-//  names[19] = "Department of Energy Grants to States for Weatherization";
-//  names[20] = "Beach Replenishment";
-//  names[21] = "New Starts Transit";
-//  names[22] = "Exchange Programs for Alaska, Natives Native Hawaiians, and Their Historical Trading Partners in Massachusetts.";
-//  names[23] = "Intercity and High Speed Rail Grants";
-//  names[24] = "Title X Family Planning";
-//  names[25] = "Appalachian Regional Commission";
-//  names[26] = "Economic Development Administration";
-//  names[27] = "Programs under the National and Community Services Act";
-//  names[28] = "Applied Research at Department of Energy";
-//  names[29] = "FreedomCAR and Fuel Partnership";
-//  names[30] = "Energy Star Program";
-//  names[31] = "Economic Assistance to Egypt";
-//  names[32] = "U.S. Agency for International Development";
-//  names[33] = "General Assistance to District of Columbia";
-//  names[34] = "Subsidy for Washington Metropolitan Area Transit Authority";
-//  names[35] = "Presidential Campaign Fund";
-//  names[36] = "Federal office space acquisition funding";
-//  names[37] = "Excess federal properties";
-//  names[38] = "Mohair Subsidies";
-//  names[39] = "Taxpayer subsidies to the United Nations Intergovernmental Panel on Climate Change";
-//  names[40] = "Market Access Program";
-//  names[41] = "USDA Sugar Program";
-//  names[42] = "Subsidy to Organisation for Economic Co-operation and Development (OECD)";
-//  names[43] = "Corporate Subsidies";
-//  names[44] = "Aid to Israel";
-//  names[45] = "Tax-Exempt Status for Churches";
-//  names[46] = "1% reduction in Defense Spending";
-//  names[47] = "MEDICARE";
-//  names[48] = "SOCIAL SECURITY";
-//  names[49] = "DEFENSE";
-//  costs[0] = 44500;
-//  costs[1] = 2500;
-//  costs[2] = 1700;
-//  costs[3] = 42000;
-//  costs[4] = 16750;
-//  costs[5] = 16750;
-//  costs[6] = 25000;
-//  costs[7] = 156500;
-//  costs[8] = 130000;
-//  costs[9] = 5500;
-//  costs[10] = 2000;
-//  costs[11] = 4700;
-//  costs[12] = 43;
-//  costs[13] = 2400;
-//  costs[14] = 750000;
-//  costs[15] = 60000;
-//  costs[16] = 15000;
-//  costs[17] = 7000;
-//  costs[18] = 12500;
-//  costs[19] = 53000;
-//  costs[20] = 9500;
-//  costs[21] = 200000;
-//  costs[22] = 900;
-//  costs[23] = 250000;
-//  costs[24] = 31800;
-//  costs[25] = 7600;
-//  costs[26] = 29300;
-//  costs[27] = 115000;
-//  costs[28] = 127000;
-//  costs[29] = 20000;
-//  costs[30] = 5200;
-//  costs[31] = 25000;
-//  costs[32] = 139000;
-//  costs[33] = 21000;
-//  costs[34] = 15000;
-//  costs[35] = 7750;
-//  costs[36] = 86400;
-//  costs[37] = 1500000;
-//  costs[38] = 100;
-//  costs[39] = 1250;
-//  costs[40] = 20000;
-//  costs[41] = 1400;
-//  costs[42] = 9300;
-//  costs[43] = 10000000;
-//  costs[44] = 300000;
-//  costs[45] = 7100000;
-//  costs[46] = 740000;
-//  costs[47] = 56000000;
-//  costs[48] = 65000000;
-//  costs[49] = 74000000;
 //  reductions = new ArrayList();
 //  onscreen = new ArrayList();
 //  for (int i=0;i<47;i++) {

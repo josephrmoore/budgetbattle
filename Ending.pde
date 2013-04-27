@@ -14,5 +14,8 @@ class Ending {
     this.degree = degree;
     this.content = content;
   }
-
-
+  
+  void draw(){
+    
+  }
+}

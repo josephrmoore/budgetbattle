@@ -1,5 +1,5 @@
 class Player {
-  boolean type; // false/0 = player 1, true/1 = player 2
+  int player; // false/0 = player 1, true/1 = player 2
   int value; // total money cut or spent
   String name; // Input from the player
 
@@ -7,15 +7,15 @@ class Player {
 // Player p = new Player(0);
 // Player p = new Player(1);  
 
-  Player(boolean type) {
-    this.type = type;
+  Player(int player) {
+    this.player = player;
   }
 
-  void action(){
-    if(this.type == 0){
+  void act(){
+    if(this.player == 0){
       // cut
-    } else if(this.type == 1){
+    } else if(this.player == 1){
       // vote
     }
   }
-
+}
