@@ -13,9 +13,11 @@ class Player {
 
   void act(){
     if(this.player == 0){
-      // cut
-    } else if(this.player == 1){
       // vote
+      current_favor.acted();
+    } else if(this.player == 1){
+      // cut
+      current_bill.acted();
     }
   }
 }

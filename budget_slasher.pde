@@ -1,3 +1,5 @@
+import java.util.*;
+import java.util.concurrent.*;
 import org.json.*;
 import processing.serial.*;
 //import ddf.minim.*;
@@ -5,12 +7,17 @@ import processing.serial.*;
 Player p1 = new Player(0);
 Player p2 = new Player(1);
 int state;
-PImage[] backgrounds = new PImage[4];
+int bill_cycle, favor_cycle, calendar_cycle, bill_limit, favor_limit, calendar_limit;
+int current_month, final_month;
+PImage[] backgrounds = new PImage[11];
 boolean p1ready, p2ready;
 PFont atlantic, gotham, bigcaslon;
 Serial port;
 
-ArrayList bills, favors, responses, endings;
+ArrayList bills_left, favors_left, bills_cut, favors_passed, bills_presented;
+
+JSON json, bills, favors, responses, endings;
+Actionable current_bill, current_favor;
 
 // create actionables
 // create players
@@ -20,49 +27,71 @@ ArrayList bills, favors, responses, endings;
 // play responses according to actions
 // choose ending based on the final state of the interactions
 
-
 void setup(){
   state = 0;
   p1ready=false;
   p2ready=false;
-  backgrounds[0] = loadImage("title.jpg");
-  backgrounds[1] = loadImage("instructions.jpg");
-  backgrounds[2] = loadImage("level.jpg");
+  backgrounds[0] = loadImage("bb_title.jpg");
+  backgrounds[1] = loadImage("bb_instructions.jpg");
+  backgrounds[2] = loadImage("bb_game.jpg");
   backgrounds[3] = loadImage("background.jpg");
+  backgrounds[4] = loadImage("best_true.jpg");
+  backgrounds[5] = loadImage("best_false.jpg");
+  backgrounds[6] = loadImage("medium_true.jpg");
+  backgrounds[7] = loadImage("medium_false.jpg");
+  backgrounds[8] = loadImage("worst_true.jpg");
+  backgrounds[9] = loadImage("worst_false.jpg");
+  backgrounds[10] = loadImage("bb_postit.png");
   port = new Serial(this, Serial.list()[0], 9600);
   port.bufferUntil('\n');
   atlantic = loadFont("atlantic.vlw");
   gotham = loadFont("gotham.vlw");
   bigcaslon = loadFont("bigcaslon.vlw");
-  bills = new ArrayList();
-  favors = new ArrayList();
-  responses = new ArrayList();
-  endings = new ArrayList();
-  load("bills", bills);
-  load("favors", favors);
-  load("responses", responses);
-  load("endings", endings);
   size(800, 600);
   background(0);
   rectMode(CENTER);
-  JSON json = JSON.load(dataPath("budgetbattle.json"));
-  println(json);
-  // JSON f = json.getArray("favors");
-  // JSON f1 =  f.getObject(0);
-  // f1.getString("name") // fest1
-  // json.length()
+  json = JSON.load(dataPath("budgetbattle.json"));
+//  println(json);
+  favors = json.getArray("favors");
+  endings = json.getArray("endings");
+  responses = json.getArray("responses");
+  bills = json.getArray("bills");
+  bills_left = new ArrayList();
+  favors_left = new ArrayList();
+  bills_cut = new ArrayList();
+  favors_passed = new ArrayList();
+  bills_presented = new ArrayList();
+
+  for(int i=0; i<bills.length(); i++){
+    bills_left.add(bills.getObject(i));
+  }
+  for(int i=0; i<favors.length(); i++){
+    favors_left.add(favors.getObject(i));
+  }
+  JSON this_bill = bills.getObject((int)random(bills.length()));
+  JSON this_favor = favors.getObject((int)random(favors.length()));
+  bill_cycle = 0;
+  favor_cycle = 0;
+  calendar_cycle = 0;
+  bill_limit = 1500;
+  favor_limit = 3000;
+  calendar_limit = 1000;
+  current_month = 1;
+  final_month = 24;
 }
 
 void draw(){
-  image(backgrounds[state], 0, 0);
   // Intro screen
   if(state == 0){
+    image(backgrounds[state], 0, 0);
     startScreen();
   // Splitscreen explanation
   } else if (state == 1){
+    image(backgrounds[state], 0, 0);
     playersScreen();
   // The game
   } else if (state == 2){
+    image(backgrounds[state], 0, 0);
     game();
   // Endings
   } else if (state == 3){
@@ -97,17 +126,45 @@ void startScreen(){
 
 void playersScreen(){
   state = 1;
+  fill(#e7db76);
+  textFont(gotham, 32);
   if(p1ready==true){
     // text saying ready
+      text("Ready!".toUpperCase(), 135, 540);
+  } else {
+      text("Vote to Start".toUpperCase(), 70, 540);
   }
   if(p2ready==true){
-    // text saying ready
+    text("Ready!".toUpperCase(), 540, 540);
+  } else {
+    text("Cut to Start".toUpperCase(), 470, 540);
   }
 }
 
 void game(){
   state = 2;
-  // game logic here
+  // start timer
+  timer("bill");
+  timer("favor");
+  timer("calendar");
+  current_bill.render();
+  current_favor.render();
+  // render favor/bill
+    
+  // if button, clear timer, restart timer
+  
+  //   if enough buttons, favor passed
+  
+  //     save stats
+  
+  // if timer runs out, favor declined
+  
+  //   get next favor
+    
+  // if cut, cut bill
+  
+  //   save stats
+  
 }
 
 void results(){
@@ -152,6 +209,72 @@ void load(String type, ArrayList container){
     
   } else if(type=="endings"){
     
+  }
+}
+
+int timer(String type){
+  int r = 0;
+  if(type == "bill"){
+    if ((millis()-bill_cycle)>=bill_limit) {
+      bill_cycle = millis();
+       billReset();
+       r = (int)(bill_cycle-millis());
+    }
+  } else if(type == "favor"){
+    if ((millis()-favor_cycle)>=favor_limit) {
+      favor_cycle = millis();
+       favorReset();
+       r = (int)(favor_cycle-millis());
+    }
+  } else if(type == "calendar"){
+    if ((millis()-calendar_cycle)>=calendar_limit) {
+      calendar_cycle = millis();
+       calendarReset();
+       r = (int)(calendar_cycle-millis());
+    }
+  } 
+  return r;
+}
+
+void billReset(){
+  if(bills_left.size()>0){
+    if(bills_left.size() != bills.length()){
+      if(current_bill.active){
+        current_bill.active = false;
+      }
+    }
+    int bill_i = (int)random(0, bills_left.size()-1);
+    current_bill = new Actionable("bill", (JSON) bills_left.get(bill_i));
+    bills_presented.add(bills.getObject(bill_i));
+    bills_left.remove(bill_i);
+  }
+}
+
+void favorReset(){
+  if(favors_left.size()>0){
+    int favor_i = (int)random(0, favors_left.size()-1);
+    current_favor = new Actionable("favor", (JSON) favors_left.get(favor_i));
+    favors_left.remove(favor_i);
+  }
+}
+
+void calendarReset(){
+  current_month += 1;
+  if(current_month >= final_month){
+    state = 3;
+  }
+}
+
+void serialEvent (Serial port) {
+  String message = port.readStringUntil('\n');
+  String[] parts = message.split(" ");
+  if(parts.length == 2){
+      if(float(parts[0]) == 1){
+      action(p1);
+    }
+    if(float(parts[1]) == 1){
+      action(p2);
+    }
   }
 }
 
