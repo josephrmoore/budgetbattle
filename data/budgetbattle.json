@@ -1,0 +1,392 @@
+{
+	"bills" : [
+		{
+			"name": "Corporation for Public Broadcasting Subsidy",
+			"cost": 44500,
+			"affiliation": "left"
+		},
+		{
+			"name": "Save America’s Treasures Program",
+			"cost": 2500,
+			"affiliation": "left"
+		},
+		{
+			"name": "International Fund for Ireland",
+			"cost": 1700,
+			"affiliation": "left"
+		},
+		{
+			"name": "National Endowment for the Arts",
+			"cost": 16750,
+			"affiliation": "left"
+		},
+		{
+			"name": "National Endowment for the Humanities",
+			"cost": 16750,
+			"affiliation": "left"
+		},
+		{
+			"name": "Essential Air Service",
+			"cost": 15000,
+			"affiliation": "left"
+		},
+		{
+			"name": "Technology Innovation Program",
+			"cost": 7000,
+			"affiliation": "left"
+		},
+		{
+			"name": "Department of Energy Grants to States for Weatherization",
+			"cost": 53000,
+			"affiliation": "left"
+		},
+		{
+			"name": "Beach Replenishment",
+			"cost": 9500,
+			"affiliation": "left"
+		},
+		{
+			"name": "Exchange Programs for Alaska, Natives Native Hawaiians, and Their Historical Trading Partners in Massachusetts.",
+			"cost": 900,
+			"affiliation": "left"
+		},
+		{
+			"name": "Intercity and High Speed Rail Grants",
+			"cost": 250000,
+			"affiliation": "left"
+		},
+		{
+			"name": "Title X Family Planning",
+			"cost": 31800,
+			"affiliation": "left"
+		},
+		{
+			"name": "Programs under the National and Community Services Act",
+			"cost": 115000,
+			"affiliation": "left"
+		},
+		{
+			"name": "Economic Assistance to Egypt",
+			"cost": 25000,
+			"affiliation": "left"
+		},
+		{
+			"name": "General Assistance to District of Columbia",
+			"cost": 21000,
+			"affiliation": "left"
+		},
+		{
+			"name": "Subsidy for Washington Metropolitan Area Transit Authority",
+			"cost": 15000,
+			"affiliation": "left"
+		},
+		{
+			"name": "Mohair Subsidies",
+			"cost": 100,
+			"affiliation": "left"
+		},
+		{
+			"name": "Taxpayer subsidies to the United Nations Intergovernmental Panel on Climate Change",
+			"cost": 1250,
+			"affiliation": "left"
+		},
+		{
+			"name": "1% reduction in Corporate Subsidies",
+			"cost": 100000,
+			"affiliation": "right"
+		},
+		{
+			"name": "Aid to Israel",
+			"cost": 300000,
+			"affiliation": "right"
+		},
+		{
+			"name": "Tax-Exempt Status for Churches",
+			"cost": 7100000,
+			"affiliation": "right"
+		},
+		{
+			"name": "1% reduction in Defense Spending",
+			"cost": 740000,
+			"affiliation": "right"
+		},
+		{
+			"name": "1% reduction in Medicare",
+			"cost": 560000,
+			"affiliation": "right"
+		},
+		{
+			"name": "1% reduction in Social Security",
+			"cost": 650000,
+			"affiliation": "right"
+		}
+	],
+	
+	"favors" : [
+		{
+			"name":"This will help me get reelected.",
+			"cost":4000,
+			"affiliation": "left",
+			"righteousness": 0
+		},
+		{
+			"name":"This will bring jobs... to my state...",
+			"cost":6000,
+			"affiliation": "right",
+			"righteousness": .5
+		},
+		{
+			"name":"This will really help poor people everywhere.",
+			"cost":8000,
+			"affiliation": "left",
+			"righteousness": 1
+		},
+        {
+			"name":"This will help white people.",
+			"cost":7500,
+			"affiliation": "right",
+			"righteousness": 0
+		},
+		{
+			"name":"This will help small businesses.",
+			"cost":3200,
+			"affiliation": "right",
+			"righteousness": 1
+		},
+		{
+			"name":"I need this program to succeed and it needs money.",
+			"cost":8700,
+			"affiliation": "left",
+			"righteousness": 0
+		},
+        {
+			"name":"Subsidy to Music Industry to help my wife's career.",
+			"cost":11200,
+			"affiliation": "left",
+			"righteousness": 0
+		},
+		{
+			"name":"Money for Monsanto means more jobs for my state",
+			"cost":6000,
+			"affiliation": "right",
+			"righteousness": .2
+		},
+		{
+			"name":"We need the Ten Commandments at the state capitol.",
+			"cost":1000,
+			"affiliation": "right",
+			"righteousness": .4
+		},
+        {
+			"name":"Our states are friendly. We should stick together.",
+			"cost":7700,
+			"affiliation": "left",
+			"righteousness": 0
+		},
+		{
+			"name":"Giveaway to corporation but will create some jobs...",
+			"cost":10500,
+			"affiliation": "right",
+			"righteousness": .5
+		},
+		{
+			"name":"Better budget for Veteran Health Care",
+			"cost":12400,
+			"affiliation": "right",
+			"righteousness": 1
+		},
+        {
+			"name":"Westboro Baptist Church wants this bill squashed.",
+			"cost":5600,
+			"affiliation": "right",
+			"righteousness": 0
+		},
+		{
+			"name":"It's not exactly a fair construction bid, but it's more fair than it could be...",
+			"cost":8900,
+			"affiliation": "left",
+			"righteousness": .5
+		},
+		{
+			"name":"Better care for seniors and poor people",
+			"cost":8000,
+			"affiliation": "left",
+			"righteousness": 1
+		},
+        {
+			"name":"Tax break for Union bosses but not the workers.",
+			"cost":9400,
+			"affiliation": "left",
+			"righteousness": 0
+		},
+		{
+			"name":"My state need more money.",
+			"cost":6500,
+			"affiliation": "right",
+			"righteousness": .5
+		},
+		{
+			"name":"Jobs program for welfare recipients.",
+			"cost":4500,
+			"affiliation": "right",
+			"righteousness": 1
+		},
+        {
+			"name":"My rich constituents don't like this tax.",
+			"cost":8300,
+			"affiliation": "right",
+			"righteousness": 0
+		},
+        {
+			"name":"Aid to charity group I own.",
+			"cost":7000,
+			"affiliation": "left",
+			"righteousness": 0
+		}
+    ],
+	
+	"responses" : [
+		{
+			"name":"palin",
+			"mp3": "0.mp3",
+			"img": "0.jpg"
+		},
+		{
+			"name":"paul",
+			"mp3": "1.mp3",
+			"img": "1.jpg"
+		},
+		{
+			"name":"bachman",
+			"mp3": "2.mp3",
+			"img": "2.jpg"
+		},
+		{
+			"name":"ryan",
+			"mp3": "3.mp3",
+			"img": "3.jpg"
+		},
+		{
+			"name":"boener",
+			"mp3": "4.mp3",
+			"img": "4.jpg"
+		},
+		{
+			"name":"pelosi",
+			"mp3": "5.mp3",
+			"img": "5.jpg"
+		},
+		{
+			"name":"frank",
+			"mp3": "6.mp3",
+			"img": "6.jpg"
+		},
+		{
+			"name":"obama",
+			"mp3": "7.mp3",
+			"img": "7.jpg"
+		},
+		{
+			"name":"kusinich",
+			"mp3": "8.mp3",
+			"img": "8.jpg"
+		},
+		{
+			"name":"clinton",
+			"mp3": "9.mp3",
+			"img": "9.jpg"
+		}
+	],
+	
+	"endings" : [
+    {
+		"type" : "good",
+		"party" : "left",
+		"reelected" : true,
+		"content" : "You were reelected in a landslide. The sky's the limit for you.",
+		"img" : 4
+	},
+	{
+		"type" : "mediocre",
+		"party" : "left",
+		"reelected" : true,
+		"content" : "You were reelected, but only just. No one could call it a mandate, so you can look forward to a pretty eventless term.",
+		"img" : 5
+	},
+	{
+		"type" : "bad",
+		"party" : "left",
+		"reelected" : true,
+		"content" : "You were reelected, somehow. Everyone hates you, but screw them. You did what you had to to get ahead.",
+		"img" : 6
+	},
+	{
+		"type" : "good",
+		"party" : "left",
+		"reelected" : false,
+		"content" : "You were not reelected, but you are held as a hero for sticking to your moral beliefs. The next time you run it will be a landslide.",
+		"img" : 7
+	},
+	{
+		"type" : "mediocre",
+		"party" : "left",
+		"reelected" : false,
+		"content" : "You were not reelected, but you can be proud of an adequate service record and moderate party fame.",
+		"img" : 8
+	},
+	{
+		"type" : "bad",
+		"party" : "left",
+		"reelected" : false,
+		"content" : "You were not reelected. You are a pariah. No one in the party will speak to you, as they know what a snake you are.",
+		"img" : 9
+	},
+    {
+		"type" : "good",
+		"party" : "right",
+		"reelected" : true,
+		"content" : "You were reelected in a landslide. The sky's the limit for you.",
+		"img" : 4
+	},
+	{
+		"type" : "mediocre",
+		"party" : "right",
+		"reelected" : true,
+		"content" : "You were reelected, but only just. No one could call it a mandate, so you can look forward to a pretty eventless term.",
+		"img" : 5
+	},
+	{
+		"type" : "bad",
+		"party" : "right",
+		"reelected" : true,
+		"content" : "You were reelected, somehow. Everyone hates you, but screw them. You did what you had to to get ahead.",
+		"img" : 6
+	},
+	{
+		"type" : "good",
+		"party" : "right",
+		"reelected" : false,
+		"content" : "You were not reelected, but you are held as a hero for sticking to your moral beliefs. The next time you run it will be a landslide.",
+		"img" : 7
+	},
+	{
+		"type" : "mediocre",
+		"party" : "right",
+		"reelected" : false,
+		"content" : "You were not reelected, but you can be proud of an adequate service record and moderate party fame.",
+		"img" : 8
+	},
+	{
+		"type" : "bad",
+		"party" : "right",
+		"reelected" : false,
+		"content" : "You were not reelected. You are a pariah. No one in the party will speak to you, as they know what a snake you are.",
+		"img" : 9
+	}
+	],
+    "player_bill" : {
+        "name": "UNQUESTIONABLY BENEFICIAL FOR THE NATION.",
+        "cost": 0,
+        "affiliation": "player"
+    }
+}
