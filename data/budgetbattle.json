@@ -140,8 +140,110 @@
 			"cost":8000,
 			"affiliation": "left",
 			"righteousness": 1
+		},
+        {
+			"name":"This will help white people.",
+			"cost":7500,
+			"affiliation": "right",
+			"righteousness": 0
+		},
+		{
+			"name":"This will help small businesses.",
+			"cost":3200,
+			"affiliation": "right",
+			"righteousness": 1
+		},
+		{
+			"name":"I need this program to succeed and it needs money.",
+			"cost":8700,
+			"affiliation": "left",
+			"righteousness": 0
+		},
+        {
+			"name":"Subsidy to Music Industry to help my wife's career.",
+			"cost":11200,
+			"affiliation": "left",
+			"righteousness": 0
+		},
+		{
+			"name":"Money for Monsanto means more jobs for my state",
+			"cost":6000,
+			"affiliation": "right",
+			"righteousness": .2
+		},
+		{
+			"name":"We need the Ten Commandments at the state capitol.",
+			"cost":1000,
+			"affiliation": "right",
+			"righteousness": .4
+		},
+        {
+			"name":"Our states are friendly. We should stick together.",
+			"cost":7700,
+			"affiliation": "left",
+			"righteousness": 0
+		},
+		{
+			"name":"Giveaway to corporation but will create some jobs...",
+			"cost":10500,
+			"affiliation": "right",
+			"righteousness": .5
+		},
+		{
+			"name":"Better budget for Veteran Health Care",
+			"cost":12400,
+			"affiliation": "right",
+			"righteousness": 1
+		},
+        {
+			"name":"Westboro Baptist Church wants this bill squashed.",
+			"cost":5600,
+			"affiliation": "right",
+			"righteousness": 0
+		},
+		{
+			"name":"It's not exactly a fair construction bid, but it's more fair than it could be...",
+			"cost":8900,
+			"affiliation": "left",
+			"righteousness": .5
+		},
+		{
+			"name":"Better care for seniors and poor people",
+			"cost":8000,
+			"affiliation": "left",
+			"righteousness": 1
+		},
+        {
+			"name":"Tax break for Union bosses but not the workers.",
+			"cost":9400,
+			"affiliation": "left",
+			"righteousness": 0
+		},
+		{
+			"name":"My state need more money.",
+			"cost":6500,
+			"affiliation": "right",
+			"righteousness": .5
+		},
+		{
+			"name":"Jobs program for welfare recipients.",
+			"cost":4500,
+			"affiliation": "right",
+			"righteousness": 1
+		},
+        {
+			"name":"My rich constituents don't like this tax.",
+			"cost":8300,
+			"affiliation": "right",
+			"righteousness": 0
+		},
+        {
+			"name":"Aid to charity group I own.",
+			"cost":7000,
+			"affiliation": "left",
+			"righteousness": 0
 		}
-	],
+    ],
 	
 	"responses" : [
 		{
@@ -281,6 +383,10 @@
 		"content" : "You were reelected, somehow. Everyone hates you, but screw them. You did what you had to to get ahead.",
 		"img" : ""
 	}
-	]
-	
+	],
+    "player_bill" : {
+        "name": "UNQUESTIONABLY BENEFICIAL FOR THE NATION.",
+        "cost": 0,
+        "affiliation": "player"
+    }
 }

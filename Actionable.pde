@@ -11,6 +11,8 @@ class Actionable {
   boolean active, flying, alive;
   int x, y, x_last, y_last;
   float rotation, x_rate, y_rate;
+  color f;
+  PImage party;
   // Examples:
   // Actionable a = new Actionable("bill", "left", "Council for the Arts", 230000, 1);
   // Actionable a = new Actionable("favor", "left", "Pork for Ohio", 230000, .2);  
@@ -36,15 +38,25 @@ class Actionable {
     } 
     else if (this.type == "favor") {
       this.name = json.getString("name");
-      this.affiliation = json.getString("affiliation");
+      this.affiliation = (String)json.getString("affiliation");
       this.cost = json.getInt("cost");
       this.righteousness = json.getFloat("righteousness");
+    }
+    if(this.affiliation.equals("left")){
+      this.f = color(159,180,245);
+      this.party = loadImage("d.png");
+    } else if (this.affiliation.equals("right")){
+      this.f = color(245,159,159);
+      this.party = loadImage("r.png");
+    } else if (this.affiliation.equals("player")){
+      this.f = color(255,230,90);
+      this.party = loadImage("p.png");
     }
   }
 
   void render() {
     if (this.type == "bill") {
-      fill(255);
+      fill(this.f);
       pushMatrix();
       translate(width/2, height/2);
       rotate(this.rotation);
@@ -54,7 +66,6 @@ class Actionable {
       fill(0);
       textFont(atlantic, 14);
       text(this.name, this.x, this.y+0, 300, 100);
-      fill(255);
       if(this.alive == false){
         strokeWeight(10);
         stroke(#610d0d);
@@ -75,8 +86,9 @@ class Actionable {
       rotate(this.rotation);
       image(backgrounds[10], this.x, this.y);
       fill(0);
+      image(this.party, this.x+30, this.y+7);
       textFont(atlantic, 14);
-      text("Favor".toUpperCase(), this.x+100, this.y+40, 164, 40);
+      text("Favor".toUpperCase(), this.x+110, this.y+40, 164, 40);
       textFont(bigcaslon, 14);
       text(this.name.toUpperCase(), this.x+100, this.y+140, 164, 164);
       fill(255);
@@ -103,7 +115,14 @@ class Actionable {
   }
   
   void acted() {
-    this.alive = false;
+    if(this.alive){
+      this.alive = false;
+      if(this.type == "bill"){
+        bills_cut.add(this);
+      } else {
+        favors_passed.add(this);
+      }
+    }
   }
   
 }

@@ -2,21 +2,24 @@ import java.util.*;
 import java.util.concurrent.*;
 import org.json.*;
 import processing.serial.*;
-//import ddf.minim.*;
-
+import ddf.minim.*;
+Minim minim;
+AudioPlayer intro, instructions, game, slash, ding;
+AudioPlayer[] fxs = new AudioPlayer[6];
 Player p1 = new Player(0);
 Player p2 = new Player(1);
 int state;
 int bill_cycle, favor_cycle, calendar_cycle, bill_limit, favor_limit, calendar_limit;
 int current_month, final_month;
+int last_mybill;
 PImage[] backgrounds = new PImage[11];
-boolean p1ready, p2ready;
+boolean p1ready, p2ready, mybill;
 PFont atlantic, gotham, bigcaslon;
 Serial port;
 
 ArrayList bills_left, favors_left, bills_cut, favors_passed, bills_presented;
 
-JSON json, bills, favors, responses, endings;
+JSON json, bills, favors, responses, endings, player_bill;
 Actionable current_bill, current_favor;
 
 // create actionables
@@ -27,10 +30,12 @@ Actionable current_bill, current_favor;
 // play responses according to actions
 // choose ending based on the final state of the interactions
 
-void setup(){
+void setup() {
   state = 0;
+  last_mybill = 0;
   p1ready=false;
   p2ready=false;
+  mybill = false;
   backgrounds[0] = loadImage("bb_title.jpg");
   backgrounds[1] = loadImage("bb_instructions.jpg");
   backgrounds[2] = loadImage("bb_game.jpg");
@@ -51,21 +56,22 @@ void setup(){
   background(0);
   rectMode(CENTER);
   json = JSON.load(dataPath("budgetbattle.json"));
-//  println(json);
+  //  println(json);
   favors = json.getArray("favors");
   endings = json.getArray("endings");
   responses = json.getArray("responses");
   bills = json.getArray("bills");
+  player_bill = json.getObject("player_bill");
   bills_left = new ArrayList();
   favors_left = new ArrayList();
   bills_cut = new ArrayList();
   favors_passed = new ArrayList();
   bills_presented = new ArrayList();
 
-  for(int i=0; i<bills.length(); i++){
+  for (int i=0; i<bills.length(); i++) {
     bills_left.add(bills.getObject(i));
   }
-  for(int i=0; i<favors.length(); i++){
+  for (int i=0; i<favors.length(); i++) {
     favors_left.add(favors.getObject(i));
   }
   JSON this_bill = bills.getObject((int)random(bills.length()));
@@ -78,32 +84,62 @@ void setup(){
   calendar_limit = 1000;
   current_month = 1;
   final_month = 24;
+  minim = new Minim(this);
+  intro = minim.loadFile("intro.mp3");
+  instructions = minim.loadFile("instructions.mp3");
+  game = minim.loadFile("game.mp3");
+  slash = minim.loadFile("slash.mp3");
+  ding = minim.loadFile("ding.mp3");
+  fxs[0] = minim.loadFile("ohyeah.mp3");
+  fxs[1] = minim.loadFile("cutitcutit.mp3");
+  fxs[2] = minim.loadFile("cutit.mp3");
+  fxs[3] = minim.loadFile("leavenothing.mp3");
+  fxs[4] = minim.loadFile("salttheearth.mp3");
+  fxs[5] = minim.loadFile("cutitall.mp3");
 }
 
-void draw(){
+void draw() {
   // Intro screen
-  if(state == 0){
+  if (state == 0) {
     image(backgrounds[state], 0, 0);
     startScreen();
-  // Splitscreen explanation
-  } else if (state == 1){
+    if (!intro.isPlaying()) {
+      intro.loop();
+    }
+    // Splitscreen explanation
+  } 
+  else if (state == 1) {
     image(backgrounds[state], 0, 0);
     playersScreen();
-  // The game
-  } else if (state == 2){
+    if (!instructions.isPlaying() && !instructions.isLooping()) {
+      if (intro.isPlaying()) {
+        intro.close();
+      }
+      instructions.loop();
+    }
+    // The game
+  } 
+  else if (state == 2) {
     image(backgrounds[state], 0, 0);
     game();
-  // Endings
-  } else if (state == 3){
+    if (!game.isPlaying() && !game.isLooping()) {
+      if (instructions.isPlaying()) {
+        instructions.close();
+      }
+      game.loop();
+    }
+    // Endings
+  } 
+  else if (state == 3) {
     results();
   }
 }
 
 void keyPressed() {
-  if(key == 'q'){
+  if (key == 'q') {
     action(p1);
   }
-  if(key == 'p'){
+  if (key == 'p') {
     action(p2);
   }
   if (key == '0') {
@@ -120,28 +156,30 @@ void keyPressed() {
   }
 }
 
-void startScreen(){
+void startScreen() {
   state = 0;
 }
 
-void playersScreen(){
+void playersScreen() {
   state = 1;
   fill(#e7db76);
   textFont(gotham, 32);
-  if(p1ready==true){
+  if (p1ready==true) {
     // text saying ready
-      text("Ready!".toUpperCase(), 135, 540);
-  } else {
-      text("Vote to Start".toUpperCase(), 70, 540);
+    text("Ready!".toUpperCase(), 135, 540);
+  } 
+  else {
+    text("Vote to Start".toUpperCase(), 70, 540);
   }
-  if(p2ready==true){
+  if (p2ready==true) {
     text("Ready!".toUpperCase(), 540, 540);
-  } else {
+  } 
+  else {
     text("Cut to Start".toUpperCase(), 470, 540);
   }
 }
 
-void game(){
+void game() {
   state = 2;
   // start timer
   timer("bill");
@@ -149,25 +187,10 @@ void game(){
   timer("calendar");
   current_bill.render();
   current_favor.render();
-  // render favor/bill
-    
-  // if button, clear timer, restart timer
-  
-  //   if enough buttons, favor passed
-  
-  //     save stats
-  
-  // if timer runs out, favor declined
-  
-  //   get next favor
-    
-  // if cut, cut bill
-  
-  //   save stats
-  
+  scoreText();
 }
 
-void results(){
+void results() {
   state = 3;
   Ending e1 = calculateEnding(p1);
   Ending e2 = calculateEnding(p2);
@@ -175,108 +198,167 @@ void results(){
   e2.draw();
 }
 
-void action(Player p){
-  if(state==0){
+void action(Player p) {
+  if (state==0) {
     state=1;
-  } else if(state==1){
-    if(p.player==0 && p1ready==false){
+  } 
+  else if (state==1) {
+    if (p.player==0 && p1ready==false) {
       p1ready=true;
     }
-    if(p.player==1 && p2ready==false){
+    if (p.player==1 && p2ready==false) {
       p2ready=true;
     }
-    if(p1ready==true && p2ready==true){
+    if (p1ready==true && p2ready==true) {
       state=2;
     }
-  } else if(state==2){
+  } 
+  else if (state==2) {
     p.act();
-  } else if(state==3){
+  } 
+  else if (state==3) {
     // dunno yet
   }
 }
 
-Ending calculateEnding(Player p){
+Ending calculateEnding(Player p) {
   Ending e = new Ending(true, "left", "mediocre", "it was ok.");
   return e;
 }
 
-void load(String type, ArrayList container){
-  if(type=="bills"){
-    
-  } else if(type=="favors"){
-    
-  } else if(type=="responses"){
-    
-  } else if(type=="endings"){
-    
+void load(String type, ArrayList container) {
+  if (type=="bills") {
+  } 
+  else if (type=="favors") {
+  } 
+  else if (type=="responses") {
+  } 
+  else if (type=="endings") {
   }
 }
 
-int timer(String type){
+int timer(String type) {
   int r = 0;
-  if(type == "bill"){
+  if (type == "bill") {
     if ((millis()-bill_cycle)>=bill_limit) {
       bill_cycle = millis();
-       billReset();
-       r = (int)(bill_cycle-millis());
+      billReset();
+      r = (int)(bill_cycle-millis());
     }
-  } else if(type == "favor"){
+  } 
+  else if (type == "favor") {
     if ((millis()-favor_cycle)>=favor_limit) {
       favor_cycle = millis();
-       favorReset();
-       r = (int)(favor_cycle-millis());
+      favorReset();
+      r = (int)(favor_cycle-millis());
     }
-  } else if(type == "calendar"){
+  } 
+  else if (type == "calendar") {
     if ((millis()-calendar_cycle)>=calendar_limit) {
       calendar_cycle = millis();
-       calendarReset();
-       r = (int)(calendar_cycle-millis());
+      calendarReset();
+      r = (int)(calendar_cycle-millis());
     }
   } 
   return r;
 }
 
-void billReset(){
-  if(bills_left.size()>0){
-    if(bills_left.size() != bills.length()){
-      if(current_bill.active){
-        current_bill.active = false;
+void billReset() {
+  if (favors_passed.size()%4 == 0 && favors_passed.size() > last_mybill) {
+    last_mybill = favors_passed.size();
+    current_bill = new Actionable("bill", player_bill);
+  } else {
+    if (bills_left.size()>0) {
+      if (bills_left.size() != bills.length()) {
+        if (current_bill.active) {
+          current_bill.active = false;
+        }
       }
+      int bill_i = (int)random(0, bills_left.size()-1);
+      current_bill = new Actionable("bill", (JSON) bills_left.get(bill_i));
+      bills_presented.add(bills.getObject(bill_i));
+      bills_left.remove(bill_i);
     }
-    int bill_i = (int)random(0, bills_left.size()-1);
-    current_bill = new Actionable("bill", (JSON) bills_left.get(bill_i));
-    bills_presented.add(bills.getObject(bill_i));
-    bills_left.remove(bill_i);
   }
 }
 
-void favorReset(){
-  if(favors_left.size()>0){
+void favorReset() {
+  if (favors_left.size()>0) {
     int favor_i = (int)random(0, favors_left.size()-1);
     current_favor = new Actionable("favor", (JSON) favors_left.get(favor_i));
     favors_left.remove(favor_i);
   }
 }
 
-void calendarReset(){
+void calendarReset() {
   current_month += 1;
-  if(current_month >= final_month){
+  if (current_month >= final_month) {
     state = 3;
   }
+}
+
+void scoreText() {
+  fill(#610d0d);
+  if (p1.score == 0) {  
+    text("$0", 250, 50);
+  } 
+  else {
+    text("$"+nfc(p1.score*10)+",000", 250, 50);
+  }
+  text("SPENT", 250, 90);
+  textAlign(CENTER);
+  if (p2.score == 0) {  
+    text("$0", 650, 50);
+  } 
+  else {
+    text("$"+nfc(p2.score*10)+",000", 650, 50);
+  }
+  text("SAVED", 650, 90);
+  textAlign(CENTER);
+  text(favors_passed.size(), 150, 50);
+  text("FAVORS PASSED", 150, 90);
+  textAlign(CENTER);
+  text(bills_cut.size(), 550, 50);
+  text("BLLS CUT", 550, 90);
+  textAlign(CENTER);
+  fill(255);
+  textFont(bigcaslon, 14);
+  text("MONTHS INTO TERM", 400, 30);
+  textAlign(CENTER);
+  textFont(bigcaslon, 60);
+  text(current_month, 400, 95);
+  textAlign(CENTER);
 }
 
 void serialEvent (Serial port) {
   String message = port.readStringUntil('\n');
   String[] parts = message.split(" ");
-  if(parts.length == 2){
-      if(float(parts[0]) == 1){
+  if (parts.length == 2) {
+    if (float(parts[0]) == 1) {
       action(p1);
     }
-    if(float(parts[1]) == 1){
+    if (float(parts[1]) == 1) {
       action(p2);
     }
   }
 }
+
+void stop()
+{
+  if (state == 3) {
+    game.close();
+  } 
+  else if (state == 2) {
+    instructions.close();
+  } 
+  else if (state == 1) {
+    intro.close();
+  }
+
+  minim.stop();
+  super.stop();
+}
+
 
 //import processing.serial.*;
 //import ddf.minim.*;
@@ -603,3 +685,4 @@ void serialEvent (Serial port) {
 //  minim.stop();
 //  super.stop();
 //}
+
