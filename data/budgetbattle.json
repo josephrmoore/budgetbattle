@@ -299,89 +299,89 @@
 	],
 	
 	"endings" : [
-	{
-		"type" : "good",
-		"party" : "left",
-		"reelected" : false,
-		"content" : "You were not reelected, but you are held as a hero for sticking to your moral beliefs. The next time you run it will be a landslide.",
-		"img" : ""
-	},
-	{
-		"type" : "mediocre",
-		"party" : "left",
-		"reelected" : false,
-		"content" : "You were not reelected, but you can be proud of an adequate service record and moderate party fame.",
-		"img" : ""
-	},
-	{
-		"type" : "bad",
-		"party" : "left",
-		"reelected" : false,
-		"content" : "You were not reelected. You are a pariah. No one in the party will speak to you, as they know what a snake you are.",
-		"img" : ""
-	},
-	{
-		"type" : "good",
-		"party" : "right",
-		"reelected" : false,
-		"content" : "You were not reelected, but you are held as a hero for sticking to your moral beliefs. The next time you run it will be a landslide.",
-		"img" : ""
-	},
-	{
-		"type" : "mediocre",
-		"party" : "right",
-		"reelected" : false,
-		"content" : "You were not reelected, but you can be proud of an adequate service record and moderate party fame.",
-		"img" : ""
-	},
-	{
-		"type" : "bad",
-		"party" : "right",
-		"reelected" : false,
-		"content" : "You were not reelected. You are a pariah. No one in the party will speak to you, as they know what a snake you are.",
-		"img" : ""
-	},
-	{
+    {
 		"type" : "good",
 		"party" : "left",
 		"reelected" : true,
 		"content" : "You were reelected in a landslide. The sky's the limit for you.",
-		"img" : ""
+		"img" : 4
 	},
 	{
 		"type" : "mediocre",
 		"party" : "left",
 		"reelected" : true,
 		"content" : "You were reelected, but only just. No one could call it a mandate, so you can look forward to a pretty eventless term.",
-		"img" : ""
+		"img" : 5
 	},
 	{
 		"type" : "bad",
 		"party" : "left",
 		"reelected" : true,
 		"content" : "You were reelected, somehow. Everyone hates you, but screw them. You did what you had to to get ahead.",
-		"img" : ""
+		"img" : 6
 	},
 	{
+		"type" : "good",
+		"party" : "left",
+		"reelected" : false,
+		"content" : "You were not reelected, but you are held as a hero for sticking to your moral beliefs. The next time you run it will be a landslide.",
+		"img" : 7
+	},
+	{
+		"type" : "mediocre",
+		"party" : "left",
+		"reelected" : false,
+		"content" : "You were not reelected, but you can be proud of an adequate service record and moderate party fame.",
+		"img" : 8
+	},
+	{
+		"type" : "bad",
+		"party" : "left",
+		"reelected" : false,
+		"content" : "You were not reelected. You are a pariah. No one in the party will speak to you, as they know what a snake you are.",
+		"img" : 9
+	},
+    {
 		"type" : "good",
 		"party" : "right",
 		"reelected" : true,
 		"content" : "You were reelected in a landslide. The sky's the limit for you.",
-		"img" : ""
+		"img" : 4
 	},
 	{
 		"type" : "mediocre",
 		"party" : "right",
 		"reelected" : true,
 		"content" : "You were reelected, but only just. No one could call it a mandate, so you can look forward to a pretty eventless term.",
-		"img" : ""
+		"img" : 5
 	},
 	{
 		"type" : "bad",
 		"party" : "right",
 		"reelected" : true,
 		"content" : "You were reelected, somehow. Everyone hates you, but screw them. You did what you had to to get ahead.",
-		"img" : ""
+		"img" : 6
+	},
+	{
+		"type" : "good",
+		"party" : "right",
+		"reelected" : false,
+		"content" : "You were not reelected, but you are held as a hero for sticking to your moral beliefs. The next time you run it will be a landslide.",
+		"img" : 7
+	},
+	{
+		"type" : "mediocre",
+		"party" : "right",
+		"reelected" : false,
+		"content" : "You were not reelected, but you can be proud of an adequate service record and moderate party fame.",
+		"img" : 8
+	},
+	{
+		"type" : "bad",
+		"party" : "right",
+		"reelected" : false,
+		"content" : "You were not reelected. You are a pariah. No one in the party will speak to you, as they know what a snake you are.",
+		"img" : 9
 	}
 	],
     "player_bill" : {

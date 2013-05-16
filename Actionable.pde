@@ -84,13 +84,13 @@ class Actionable {
       pushMatrix();
       translate(width/20, height/2);
       rotate(this.rotation);
-      image(backgrounds[10], this.x, this.y);
+      image(backgrounds[10], this.x-60, this.y+10);
       fill(0);
-      image(this.party, this.x+30, this.y+7);
+      image(this.party, this.x-30, this.y+17);
       textFont(atlantic, 14);
-      text("Favor".toUpperCase(), this.x+110, this.y+40, 164, 40);
+      text("Favor".toUpperCase(), this.x+50, this.y+50, 164, 40);
       textFont(bigcaslon, 14);
-      text(this.name.toUpperCase(), this.x+100, this.y+140, 164, 164);
+      text(this.name.toUpperCase(), this.x+40, this.y+150, 164, 164);
       fill(255);
       if(this.alive == false){
         strokeWeight(10);
@@ -119,6 +119,9 @@ class Actionable {
       this.alive = false;
       if(this.type == "bill"){
         bills_cut.add(this);
+        if(this.affiliation.equals("player")){
+          player_cut = true;
+        }
       } else {
         favors_passed.add(this);
       }

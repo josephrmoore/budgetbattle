@@ -1,3 +1,4 @@
+import controlP5.*;
 import java.util.*;
 import java.util.concurrent.*;
 import org.json.*;
@@ -11,11 +12,13 @@ Player p2 = new Player(1);
 int state;
 int bill_cycle, favor_cycle, calendar_cycle, bill_limit, favor_limit, calendar_limit;
 int current_month, final_month;
-int last_mybill;
+int last_mybill, bills_passed;
+int cut_left, cut_right, not_cut_left, not_cut_right;
 PImage[] backgrounds = new PImage[11];
-boolean p1ready, p2ready, mybill;
+boolean p1ready, p2ready, mybill, player_cut, first_run;
 PFont atlantic, gotham, bigcaslon;
 Serial port;
+Ending e1, e2;
 
 ArrayList bills_left, favors_left, bills_cut, favors_passed, bills_presented;
 
@@ -33,18 +36,25 @@ Actionable current_bill, current_favor;
 void setup() {
   state = 0;
   last_mybill = 0;
+  bills_passed = 0;
+  cut_left = 0;
+  cut_right = 0;
+  not_cut_left = 0;
+  not_cut_right = 0;
   p1ready=false;
   p2ready=false;
   mybill = false;
+  player_cut = false;
+  first_run = false;
   backgrounds[0] = loadImage("bb_title.jpg");
   backgrounds[1] = loadImage("bb_instructions.jpg");
   backgrounds[2] = loadImage("bb_game.jpg");
   backgrounds[3] = loadImage("background.jpg");
   backgrounds[4] = loadImage("best_true.jpg");
-  backgrounds[5] = loadImage("best_false.jpg");
-  backgrounds[6] = loadImage("medium_true.jpg");
-  backgrounds[7] = loadImage("medium_false.jpg");
-  backgrounds[8] = loadImage("worst_true.jpg");
+  backgrounds[5] = loadImage("medium_true.jpg");
+  backgrounds[6] = loadImage("worst_true.jpg");
+  backgrounds[7] = loadImage("best_false.jpg");
+  backgrounds[8] = loadImage("medium_false.jpg");
   backgrounds[9] = loadImage("worst_false.jpg");
   backgrounds[10] = loadImage("bb_postit.png");
   port = new Serial(this, Serial.list()[0], 9600);
@@ -83,7 +93,7 @@ void setup() {
   favor_limit = 3000;
   calendar_limit = 1000;
   current_month = 1;
-  final_month = 24;
+  final_month = 600;
   minim = new Minim(this);
   intro = minim.loadFile("intro.mp3");
   instructions = minim.loadFile("instructions.mp3");
@@ -103,7 +113,10 @@ void draw() {
   if (state == 0) {
     image(backgrounds[state], 0, 0);
     startScreen();
-    if (!intro.isPlaying()) {
+    if (!intro.isPlaying() && !intro.isLooping()) {
+      if (game.isPlaying()) {
+        game.close();
+      }
       intro.loop();
     }
     // Splitscreen explanation
@@ -164,6 +177,7 @@ void playersScreen() {
   state = 1;
   fill(#e7db76);
   textFont(gotham, 32);
+  textAlign(LEFT);
   if (p1ready==true) {
     // text saying ready
     text("Ready!".toUpperCase(), 135, 540);
@@ -192,10 +206,51 @@ void game() {
 
 void results() {
   state = 3;
-  Ending e1 = calculateEnding(p1);
-  Ending e2 = calculateEnding(p2);
-  e1.draw();
-  e2.draw();
+  if (first_run == false) {
+    first_run = true;
+    for (int j=0; j<bills_presented.size(); j++) {
+      JSON b = (JSON) bills_presented.get(j);
+      boolean cut = false;
+      for (int k=0; k<bills_cut.size(); k++) {
+        Actionable a = (Actionable) bills_cut.get(k);
+        if (b.getString("name").equals(a.name)) {
+          cut = true;
+        }
+        println(b.getString("name") + " <++++++++> " + a.name);
+        println(b.getString("name").equals(a.name));
+        println("");
+        println("");
+      }
+      if (cut==true && b.getString("affiliation").equals("left")) {
+        cut_left += 1;
+      }
+      if (cut==true && b.getString("affiliation").equals("right")) {
+        cut_right += 1;
+      }
+      if (cut==false && b.getString("affiliation").equals("left")) {
+        not_cut_left += 1;
+      }
+      if (cut==false && b.getString("affiliation").equals("right")) {
+        not_cut_right += 1;
+      }
+    }
+    println(cut_left + " " + cut_right + " " + not_cut_left + " " + not_cut_right);
+    e1 = calculateEnding(p1);
+    e2 = calculateEnding(p2);
+  } 
+  else {
+    e1 = calculateEnding(p1);
+    e2 = calculateEnding(p2);
+  }
+  if (p1ready == false) {
+    e1.draw();
+  } 
+  else if (p1ready == true && p2ready == false) {
+    e2.draw();
+  } 
+  else {
+    state = 0;
+  }
 }
 
 void action(Player p) {
@@ -211,18 +266,69 @@ void action(Player p) {
     }
     if (p1ready==true && p2ready==true) {
       state=2;
+      p1ready=false;
+      p2ready=false;
     }
   } 
   else if (state==2) {
     p.act();
   } 
   else if (state==3) {
-    // dunno yet
+    if (p.player==0 && p1ready==false) {
+      p1ready=true;
+    }
+    if (p.player==1 && p2ready==false) {
+      p2ready=true;
+    }
+    if (p1ready==true && p2ready==true) {
+      if (e1.reelected == true && e2.reelected == true) {
+        state = 2;
+        final_month += 24;
+      } 
+      else {
+        state = 0;
+        last_mybill = 0;
+        bills_passed = 0;
+        cut_left = 0;
+        cut_right = 0;
+        not_cut_left = 0;
+        not_cut_right = 0;
+        p1ready=false;
+        p2ready=false;
+        mybill = false;
+        player_cut = false;
+        first_run = false;
+        bills_left = new ArrayList();
+        favors_left = new ArrayList();
+        bills_cut = new ArrayList();
+        favors_passed = new ArrayList();
+        bills_presented = new ArrayList();
+
+        for (int i=0; i<bills.length(); i++) {
+          bills_left.add(bills.getObject(i));
+        }
+        for (int i=0; i<favors.length(); i++) {
+          favors_left.add(favors.getObject(i));
+        }
+        bill_cycle = 0;
+        favor_cycle = 0;
+        calendar_cycle = 0;
+        bill_limit = 1500;
+        favor_limit = 3000;
+        calendar_limit = 1000;
+        current_month = 1;
+        final_month = 24;
+        p1 = new Player(0);
+        p2 = new Player(1);
+      }
+      p1ready=false;
+      p2ready=false;
+    }
   }
 }
 
 Ending calculateEnding(Player p) {
-  Ending e = new Ending(true, "left", "mediocre", "it was ok.");
+  Ending e = new Ending(cut_left, cut_right, not_cut_left, not_cut_right, bills_passed, player_cut, p);
   return e;
 }
 
@@ -254,10 +360,12 @@ int timer(String type) {
     }
   } 
   else if (type == "calendar") {
-    if ((millis()-calendar_cycle)>=calendar_limit) {
-      calendar_cycle = millis();
-      calendarReset();
-      r = (int)(calendar_cycle-millis());
+    if (current_month<final_month) {
+      if ((millis()-calendar_cycle)>=calendar_limit) {
+        calendar_cycle = millis();
+        calendarReset();
+        r = (int)(calendar_cycle-millis());
+      }
     }
   } 
   return r;
@@ -267,7 +375,9 @@ void billReset() {
   if (favors_passed.size()%4 == 0 && favors_passed.size() > last_mybill) {
     last_mybill = favors_passed.size();
     current_bill = new Actionable("bill", player_bill);
-  } else {
+    bills_passed+=1;
+  } 
+  else {
     if (bills_left.size()>0) {
       if (bills_left.size() != bills.length()) {
         if (current_bill.active) {
@@ -278,6 +388,14 @@ void billReset() {
       current_bill = new Actionable("bill", (JSON) bills_left.get(bill_i));
       bills_presented.add(bills.getObject(bill_i));
       bills_left.remove(bill_i);
+    } 
+    else {
+      for (int i=0; i<bills.length(); i++) {
+        bills_left.add(bills.getObject(i));
+      }
+      for (int i=0; i<favors.length(); i++) {
+        favors_left.add(favors.getObject(i));
+      }
     }
   }
 }
@@ -299,35 +417,42 @@ void calendarReset() {
 
 void scoreText() {
   fill(#610d0d);
+  textAlign(CENTER);
+    textFont(bigcaslon, 24);
   if (p1.score == 0) {  
-    text("$0", 250, 50);
+    text("$0", 220, 50);
   } 
   else {
-    text("$"+nfc(p1.score*10)+",000", 250, 50);
+    text("$"+nfc(p1.score*10)+",000", 220, 50);
   }
-  text("SPENT", 250, 90);
-  textAlign(CENTER);
+  textFont(bigcaslon, 16);
+  text("SPENT", 220, 90);
+  textFont(bigcaslon, 24);
   if (p2.score == 0) {  
     text("$0", 650, 50);
   } 
   else {
-    text("$"+nfc(p2.score*10)+",000", 650, 50);
+    text("$"+nfc(p2.score*10)+",000", 690, 50);
   }
-  text("SAVED", 650, 90);
-  textAlign(CENTER);
-  text(favors_passed.size(), 150, 50);
-  text("FAVORS PASSED", 150, 90);
-  textAlign(CENTER);
+  textFont(bigcaslon, 16);
+  text("SAVED", 690, 90);
+    textFont(bigcaslon, 36);
+  text(favors_passed.size(), 75, 50);
+    textFont(bigcaslon, 16);
+  text("FAVORS PASSED", 75, 90);
+    textFont(bigcaslon, 36);
   text(bills_cut.size(), 550, 50);
+    textFont(bigcaslon, 16);
+  text("BILLS PASSED", 67, 290);
+    textFont(bigcaslon, 36);
+  text(bills_passed, 67, 250);
+    textFont(bigcaslon, 16);
   text("BLLS CUT", 550, 90);
-  textAlign(CENTER);
   fill(255);
   textFont(bigcaslon, 14);
   text("MONTHS INTO TERM", 400, 30);
-  textAlign(CENTER);
   textFont(bigcaslon, 60);
   text(current_month, 400, 95);
-  textAlign(CENTER);
 }
 
 void serialEvent (Serial port) {
@@ -357,6 +482,48 @@ void stop()
 
   minim.stop();
   super.stop();
+}
+
+/**
+ wordwrap taken from http://wiki.processing.org/index.php?title=Word_wrap_text
+ @author Daniel Shiffman
+ */
+
+// Function to return an ArrayList of Strings (maybe redo to just make simple array?)
+// Arguments: String to be wrapped, maximum width in pixels of each line
+ArrayList wordWrap(String s, int maxWidth) {
+  // Make an empty ArrayList
+  ArrayList a = new ArrayList();
+  float w = 0;    // Accumulate width of chars
+  int i = 0;      // Count through chars
+  int rememberSpace = 0; // Remember where the last space was
+  // As long as we are not at the end of the String
+  while (i < s.length ()) {
+    // Current char
+    char c = s.charAt(i);
+    w += textWidth(c); // accumulate width
+    if (c == ' ') rememberSpace = i; // Are we a blank space?
+    if (w > maxWidth) {  // Have we reached the end of a line?
+      String sub = s.substring(0, rememberSpace); // Make a substring
+      // Chop off space at beginning
+      if (sub.length() > 0 && sub.charAt(0) == ' ') sub = sub.substring(1, sub.length());
+      // Add substring to the list
+      a.add(sub);
+      // Reset everything
+      s = s.substring(rememberSpace, s.length());
+      i = 0;
+      w = 0;
+    } 
+    else {
+      i++;  // Keep going!
+    }
+  }
+
+  // Take care of the last remaining line
+  if (s.length() > 0 && s.charAt(0) == ' ') s = s.substring(1, s.length());
+  a.add(s);
+
+  return a;
 }
 
 
